@@ -57,7 +57,6 @@ jobs:
       # 5️⃣  Build the debug APK
       # -------------------------------------------------
       - name: Build debug APK
-        working-directory: EnchantedAndroid   # path to your Android project root
         run: ./gradlew assembleDebug
 
       # -------------------------------------------------
