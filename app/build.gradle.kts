@@ -22,6 +22,17 @@ android {
     }
 
     buildFeatures {
+        // Enable Java 17 compatibility
+        // (compileOptions below sets source/target)
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    // (end of buildFeatures block)
         compose = true
     }
     composeOptions {
