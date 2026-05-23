@@ -66,4 +66,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: enchanted-debug-apk
-          path: EnchantedAndroid/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
