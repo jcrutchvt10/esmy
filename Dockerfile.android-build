@@ -1,0 +1,30 @@
+# Dockerfile for building EnchantedAndroid on an x86_64 environment.
+# Uses gradle:8.5-jdk17 which already contains Java and Gradle.
+
+FROM --platform=linux/amd64 gradle:8.5-jdk17
+
+# Install only unzip (curl is already present)
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set up Android SDK paths
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/34.0.0:$PATH
+# Download and install Android command-line tools & required SDK components
+RUN mkdir -p $ANDROID_SDK_ROOT && cd $ANDROID_SDK_ROOT && \
+    curl -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
+    unzip cmdline-tools.zip && rm cmdline-tools.zip && \
+    mv cmdline-tools cmdline-tools_tmp && \
+    mkdir cmdline-tools && \
+    mv cmdline-tools_tmp cmdline-tools/latest && \
+    yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platforms;android-34" "build-tools;34.0.0"
+
+# Copy the project source code
+COPY . /src
+WORKDIR /src/EnchantedAndroid
+
+# Make the Gradle wrapper executable and build the debug APK
+RUN chmod +x gradlew
+RUN ./gradlew assembleDebug

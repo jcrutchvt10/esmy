@@ -1,0 +1,70 @@
+# .github/workflows/android-debug.yml
+name: Android Debug Build
+
+# Trigger on pushes and pull‑requests to the main branch (adjust as needed)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-debug-apk:
+    # GitHub provides a fresh x86‑64 Linux VM for each job
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------------------------------
+      # 1️⃣  Checkout the source code
+      # -------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------------------------------
+      # 2️⃣  Set up Java (required by Gradle)
+      # -------------------------------------------------
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle   # caches the Gradle distribution & wrapper
+
+      # -------------------------------------------------
+      # 3️⃣  Install Android SDK components
+      # -------------------------------------------------
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 34               # compileSdk / targetSdk
+          build-tools: 34.0.0         # matches the version in your build.gradle.kts
+          ndk: false                  # not needed for this pure‑Kotlin app
+          cache: true                 # caches SDK between runs
+
+      # -------------------------------------------------
+      # 4️⃣  Ensure a Gradle wrapper exists (optional but recommended)
+      # -------------------------------------------------
+      - name: Ensure Gradle wrapper
+        # If you already have gradlew in source control, you can delete this step.
+        run: |
+          if [ ! -f ./gradlew ]; then
+            echo "Generating Gradle wrapper (8.5)…"
+            ./gradle/gradle-8.5/bin/gradle wrapper --gradle-version 8.5
+          fi
+          chmod +x ./gradlew
+
+      # -------------------------------------------------
+      # 5️⃣  Build the debug APK
+      # -------------------------------------------------
+      - name: Build debug APK
+        working-directory: EnchantedAndroid   # path to your Android project root
+        run: ./gradlew assembleDebug
+
+      # -------------------------------------------------
+      # 6️⃣  Upload the resulting APK as an artifact
+      # -------------------------------------------------
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: enchanted-debug-apk
+          path: EnchantedAndroid/app/build/outputs/apk/debug/*.apk
