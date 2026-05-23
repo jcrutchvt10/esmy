@@ -56,8 +56,8 @@ jobs:
       # -------------------------------------------------
       # 5️⃣  Build the debug APK
       # -------------------------------------------------
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+- name: Build debug APK
+  run: ./gradlew assembleDebug --no-daemon
 
       # -------------------------------------------------
       # 6️⃣  Upload the resulting APK as an artifact
