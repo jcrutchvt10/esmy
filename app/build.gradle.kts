@@ -21,10 +21,6 @@ android {
         versionName = "1.0"
     }
 
-    buildFeatures {
-        // Enable Java 17 compatibility
-        // (compileOptions below sets source/target)
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -32,12 +28,15 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    // (end of buildFeatures block)
+
+    buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
